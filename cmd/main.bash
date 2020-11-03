@@ -103,6 +103,14 @@ main() {
     $command "$@"
   else
     debug default-command
-    jidder "$@"
+    if [[ $SELF =~ kubectl ]]; then
+      debug "kubectl PLUGIN mode SELF=$SELF"
+      cmd=${SELF#*kubectl-}
+      ## convert between kebab and snake style
+      ${cmd//_/-} "$@"
+    else
+      ## default command if invoked directly
+      jid "$@"
+    fi
   fi
 }
