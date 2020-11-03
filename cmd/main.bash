@@ -131,23 +131,53 @@ jid-cols() {
   echo "---> $cmd"
   eval "$cmd"
   echo "---> kcc-${resType}() { $cmd ; }"
+usage() {
+  declare desc="Prints usage hints"
+  declare cmd=${1:-jidder}
+
+  cat <<EOF 1>&2
+Usage: kubectl $cmd [resourceType]
+  A bash function will be generated. Wrapping: kubectl get -o ...
+  The json-path will be interactively contstructed.
+
+  If you want to use the generated function in your actual shell,
+  cancel with CTRL-C and use:
+
+  eval \$(kubectl $cmd)
+
+EOF
+}
+
+VERSION=0.0.1
+version() {
+  declare cmd=${1:-jidder}
+  echo "${cmd}: $VERSION" 1>&2
+  exit 0
 }
 
 main() {
+  cmd=${SELF#*kubectl-}
+  ## convert between kebab and snake style
+  cmd=${cmd//_/-}
+
   if [[ $1 =~ :: ]]; then
     debug DIRECT-COMMAND  ...
     command=${1#::}
     shift
     $command "$@"
   else
+    if [[ $1 == --version ]];then
+      version $cmd
+    fi
+
     debug default-command
     if [[ $SELF =~ kubectl ]]; then
       debug "kubectl PLUGIN mode SELF=$SELF"
-      cmd=${SELF#*kubectl-}
-      ## convert between kebab and snake style
-      ${cmd//_/-} "$@"
+      [[ "$@" ]] || usage $cmd
+      ${cmd} "$@"
     else
       ## default command if invoked directly
+      [[ "$@" ]] || usage $cmd
       jid "$@"
     fi
   fi
