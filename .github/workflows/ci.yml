@@ -39,4 +39,5 @@ jobs:
         files: |
           build/jidder-Darwin
           build/jidder-Linux
+          build/jidder.tgz
           build/jidder.zip
