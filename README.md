@@ -35,7 +35,7 @@ $ kubectl krew install lalyos/jid-cols
 
 ## Usage - jid
 
-[![asciicast](https://asciinema.org/a/qF2XJuJjLzj95Cs3t3fxZSkuZ.svg)](https://asciinema.org/a/qF2XJuJjLzj95Cs3t3fxZSkuZ)
+[![asciicast](https://asciinema.org/a/qF2XJuJjLzj95Cs3t3fxZSkuZ.svg)](https://asciinema.org/a/qF2XJuJjLzj95Cs3t3fxZSkuZ?autoplay=1)
 
 To start step-by-step first interactively select the resourceType,
 and only print the generated helper function
