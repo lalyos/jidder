@@ -2,6 +2,14 @@ build:
 	go-bindata cmd
 	go build
 
+build-dev:
+	go-bindata -debug cmd
+	go build
+
+install-dev:
+	ln -s $(PWD)/jidder ~/.krew/bin/kubectl-jid
+	ln -s $(PWD)/jidder ~/.krew/bin/kubectl-jid_cols
+
 deps:
 	@go-bindata --version || go get github.com/jteeuwen/go-bindata/...
 
@@ -16,3 +24,5 @@ ci: cross
 
 clean:
 	rm -rf build
+	rm -rf /usr/local/bin/kubectl-jid*
+	rm -rf ~/.krew/bin/kubectl-jid*
