@@ -35,7 +35,7 @@ $ kubectl krew install lalyos/jid-cols
 
 ## Usage - jid
 
-... TODO: ascicast ...
+[![asciicast](https://asciinema.org/a/qF2XJuJjLzj95Cs3t3fxZSkuZ.svg)](https://asciinema.org/a/qF2XJuJjLzj95Cs3t3fxZSkuZ)
 
 To start step-by-step first interactively select the resourceType,
 and only print the generated helper function
@@ -67,6 +67,11 @@ As an example you can select 3 columns:
 - next column name: **ip** path: `.items[0].metadata.name`
 - next column name: **os** path: `.items[0].status.addresses[1].address`
 - next column name: **version** path: `.items[0].status.nodeInfo.kubeletVersion`
+- next column name: **q** to quit
+
+```
+kcc-node() { kubectl get node  -o custom-columns="NAME:.metadata.name,IP:.status.addresses[1].address,OS:.metadata.labels.kubernetes\.io/os,VERSION:.status.nodeInfo.kubeletVersion" ; }
+```
 
 
 If you want to use the generated function right away, instead of copy pasting:
