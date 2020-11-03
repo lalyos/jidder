@@ -6,6 +6,12 @@ debug() {
     fi
 }
 
+shell() {
+  declare desc="starts an interactive shell with golang interop"
+
+  DEBUG=1 bash --rcfile <(cat $BASH_SOURCE; echo 'PS1="INNER> "')
+}
+
 preview() {
   trap "rm -f $HOME/pipe" EXIT
   if [[ ! -p $HOME/pipe  ]]; then
