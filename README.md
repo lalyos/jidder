@@ -1,33 +1,21 @@
 
 kubectl plugin for generating reusable bash functions.
-Two function types can be generated:
+This is 2 plugins in one binary:
 
-- **jid** : wrapping `kubectl get -o jsonpath=...`
-- **jid-cols** : wrapping `kubectl get -o custom-columns=...`
+- **jid** : bash function to get a single json-path value, wraps `kubectl get -o jsonpath=...`
+- **jid-cols** : bash function to print a custom table, wraps `kubectl get -o custom-columns=...`
 
 In both case the jsonpath is interactively contstructed, with the help of [jid](https://github.com/simeji/jid) (Json Incremental Digger)
 
-## Usage
-
-It is a single binary ready to use on Linux/OSX, or it can be used as a kubectl-plugin.
-
-... TODO: ascicast ...
-
-## Installation - standalone
-
-```
-curl -Lo /usr/local/bin/jidder https://github.com/lalyos/jidder/releases/download/tip/jidder-$(uname)
-chmod +x /usr/local/bin/jidder
-```
-
-## Installation - standalone kubectl plugin
+## Installation A. - standalone kubectl plugin
 
 ```
 curl -Lo /usr/local/bin/kubectl-jid https://github.com/lalyos/jidder/releases/download/tip/jidder-$(uname)
 chmod +x /usr/local/bin/kubectl-jid
+cp /usr/local/bin/kubectl-jid /usr/local/bin/kubectl-jid_cols
 ```
 
-## Installation - krew kubectl plugin
+## Installation B. - krew kubectl plugin
 
 First make sure krew is [installed](https://krew.sigs.k8s.io/docs/user-guide/setup/install/)
 ```
@@ -42,6 +30,48 @@ Until it gets into the offitial krew plugin index, it can be isntalled from a cu
 $ kubectl krew index add lalyos https://github.com/lalyos/krew-index.git
 
 $ kubectl krew install lalyos/jid
+$ kubectl krew install lalyos/jid-cols
+```
+
+## Usage - jid
+
+... TODO: ascicast ...
+
+To start step-by-step first interactively select the resourceType,
+and only print the generated helper function
+```
+$ kubectl jid
+```
+
+If you know beforhand which resource type you want to work with, you can preselect it as the first argument:
+```
+$ kubectl jid node
+```
+
+If you want to use the generated function right away, instead of copy pasting:
+```
+$ eval $(kubectl jid)
+```
+
+## Usage - jid-cols
+
+Lets say you want to create a new table list of **nodes** with custom columns
+```
+$ kubectl jid-cols node
+```
+
+- follow on-screen instructions to add new columns (NAME is by default the first column)
+- after each column you will se a preview of the table
+
+As an example you can select 3 columns:
+- next column name: **ip** path: `.items[0].metadata.name`
+- next column name: **os** path: `.items[0].status.addresses[1].address`
+- next column name: **version** path: `.items[0].status.nodeInfo.kubeletVersion`
+
+
+If you want to use the generated function right away, instead of copy pasting:
+```
+$ eval $(kubectl jid)
 ```
 
 ## Dependecies
