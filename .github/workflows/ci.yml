@@ -26,11 +26,9 @@ jobs:
         go get -v -t -d ./...
 
     - name: Build
-      run: make ci
-    
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: artifacts
-        path: build 
+      run: make cross
 
+    - uses: actions/upload-artifact@v2
+      with:
+        name: jidder-bins
+        path: build
