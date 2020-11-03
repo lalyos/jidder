@@ -12,6 +12,17 @@ shell() {
   DEBUG=1 bash --rcfile <(cat $BASH_SOURCE; echo 'PS1="INNER> "')
 }
 
+chooseRes() {
+  declare desc="Interactively choose a k8s resource type"
+
+  resType=$(survey "Choose type" node pod deploy svc ingress --show-all--)
+  if [[ $resType == --show-all-- ]];then
+    all=$(kubectl api-resources -oname --sort-by=name)
+    resType=$(SURVEY_PAGE=20 survey "Choose type" ${all})
+  fi
+  echo ${resType}
+}
+
 preview() {
   trap "rm -f $HOME/pipe" EXIT
   if [[ ! -p $HOME/pipe  ]]; then
@@ -57,46 +68,73 @@ printCols() {
   cn=$(( ${#cols[@]} / 2 - 1))
   for i in $(seq 0 $cn );  do
     [[ $i -gt 0 ]] && echo -n ','
-    echo -n "${cols[name-$i]}:${cols[path-$i]}"
+    echo -n "${cols[name-$i]^^}:${cols[path-$i]}"
   done
 }
 
-jidder() {
-    declare resType=$1
+jid() {
+  declare desc="kubectl jsonpath function generator with interactive json digger"
+
+  if [[ $# -eq 0 ]]; then
+    resType=$(chooseRes)
+  else
+    resType=$1
     shift || true
+  fi
+  if ! [[ $(kubectl get ${resType} "$@" -oname) ]];then
+    echo "zero ${resType} found ..."
+    return
+  fi
 
-    #: ${resType:? required}
-    if ! [[ $resType ]]; then
-      resType=$(kubectl api-resources -o name --sort-by=name | fzf --prompt="choose a type:>")
+  jpath=$(kubectl get ${resType} "$@" -o json | jidq ".items[0]." 0)
+  #jpath=$(kubectl get ${resType} "$@" -o json | jidq ".items[0]." )
+
+  cat <<EOF
+  kjid-${resType}() { kubectl get ${resType} "\$@" -o jsonpath="{${jpath}}"; }
+  && type kjid-${resType} 1>&2
+  && kjid-${resType}
+EOF
+}
+
+jid-cols() {
+  declare desc="kubectl custom-columns function generator with jsonpath interactive digger"
+  declare resType=$1
+
+  if [[ $# -eq 0 ]]; then
+    #resType=$(kubectl api-resources -o name --sort-by=name | fzf --prompt="choose a type:>")
+    resType=$(chooseRes)
+  else
+    resType=$1
+    shift || true
+  fi
+
+  if ! [[ $(kubectl get ${resType} "$@" -o jsonpath='{range .items[*]}XXX{end}') ]];then
+      echo "zero ${resType} found ..."
+      return
+  fi
+
+  addCol name .metadata.name
+  psend kubectl get ${resType} "$@" -o custom-columns="$(printCols)"
+
+  echo "=== declare custom columns (type: 'q' to end)"
+  local col
+  while ! [[ $col == 'q' ]]; do
+    read -p "next column name: " col
+    if [[ $col != "q" ]]; then
+      jpath=$(kubectl get ${resType} "$@" -o json | jidq ".items[0]." )
+      addCol "${col}" "${jpath}"
     fi
-
-    if ! [[ $(kubectl get ${resType} "$@" -o jsonpath='{range .items[*]}XXX{end}') ]];then
-        echo "zero ${resType} found ..."
-        return
-    fi
-
-    addCol name .metadata.name
     psend kubectl get ${resType} "$@" -o custom-columns="$(printCols)"
+  done
 
-    echo "=== declare custom columns (type: 'q' to end)"
-    local col
-    while ! [[ $col == 'q' ]]; do
-      read -p "next column name: " col
-      if [[ $col != "q" ]]; then
-        jpath=$(kubectl get ${resType} "$@" -o json | jidq ".items[0]." )
-        addCol "${col}" "${jpath}"
-      fi
-      psend kubectl get ${resType} "$@" -o custom-columns="$(printCols)"
-    done
-
-    cmd=$"kubectl get ${resType} $@ -o custom-columns=\"$(printCols)\""
-    echo "---> $cmd"
-    eval "$cmd"
-    echo "---> kx-${resType}() { $cmd ; }"
+  cmd=$"kubectl get ${resType} $@ -o custom-columns=\"$(printCols)\""
+  echo "---> $cmd"
+  eval "$cmd"
+  echo "---> kcc-${resType}() { $cmd ; }"
 }
 
 main() {
-    if [[ $1 =~ :: ]]; then
+  if [[ $1 =~ :: ]]; then
     debug DIRECT-COMMAND  ...
     command=${1#::}
     shift
