@@ -26,3 +26,7 @@ clean:
 	rm -rf build
 	rm -rf /usr/local/bin/kubectl-jid*
 	rm -rf ~/.krew/bin/kubectl-jid*
+	rm -rf ~/.krew/store/jid/
+	rm -rf ~/.krew/receipts/jid.yaml
+	rm -rf ~/.krew/store/jid-cols/
+	rm -rf ~/.krew/receipts/jid-cols.yaml
