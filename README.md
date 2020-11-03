@@ -9,6 +9,7 @@ In both case the jsonpath is interactively contstructed, with the help of [jid](
 
 ## Installation A. - standalone kubectl plugin
 
+If you don't use [krew](https://krew.sigs.k8s.io), or just to want quickly try the latest dev version:
 ```
 curl -Lo /usr/local/bin/kubectl-jid https://github.com/lalyos/jidder/releases/download/tip/jidder-$(uname)
 chmod +x /usr/local/bin/kubectl-jid
@@ -25,7 +26,7 @@ GitTag            v0.4.0
 ...
 ```
 
-Until it gets into the offitial krew plugin index, it can be isntalled from a custom plugin repo:
+Until it gets into the official krew plugin index, it can be isntalled from a custom plugin repo:
 ```
 $ kubectl krew index add lalyos https://github.com/lalyos/krew-index.git
 
