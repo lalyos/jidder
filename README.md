@@ -88,6 +88,7 @@ Altough strictly speaking there are dependencies like:
 - [jid](https://github.com/simeji/jid)
 - [survey](https://github.com/AlecAivazis/survey)
 - [fzf](https://github.com/junegunn/fzf)
+
 But they are included in the single binary
 
 Even [staic bash](https://github.com/robxu9/bash-static) is included via [go-basher](https://github.com/progrium/go-basher)

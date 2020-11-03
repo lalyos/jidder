@@ -28,16 +28,8 @@ jobs:
     - name: Build
       run: make ci
 
-    - uses: actions/upload-artifact@v2
-      with:
-        name: jidder-bins
-        path: build
-
     - uses: eine/tip@master
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         files: |
-          build/jidder-Darwin
-          build/jidder-Linux
-          build/jidder.tgz
-          build/jidder.zip
+          build/*
