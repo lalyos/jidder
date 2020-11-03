@@ -51,8 +51,8 @@ psend() {
     debug PIPE ...
     base "$@" > $HOME/pipe
   else
-    echo "---> preview"
-    "$@"
+    echo "---> preview" 1>&2
+    "$@" 1>&2
   fi
 }
 
@@ -81,16 +81,16 @@ jid() {
     resType=$1
     shift || true
   fi
-  if ! [[ $(kubectl get ${resType} "$@" -oname) ]];then
+  if ! [[ $(kubectl get ${resType} -oname) ]];then
     echo "zero ${resType} found ..."
     return
   fi
 
-  jpath=$(kubectl get ${resType} "$@" -o json | jidq ".items[0]." 0)
-  #jpath=$(kubectl get ${resType} "$@" -o json | jidq ".items[0]." )
+  jpath=$(kubectl get ${resType} -o json | jidq ".items[0]." 0)
+  #jpath=$(kubectl get ${resType} -o json | jidq ".items[0]." )
 
   cat <<EOF
-  kjid-${resType}() { kubectl get ${resType} "\$@" -o jsonpath="{${jpath}}"; }
+  kjid-${resType}() { kubectl get ${resType} -o jsonpath="{${jpath}}"; }
   && type kjid-${resType} 1>&2
   && kjid-${resType}
 EOF
@@ -116,7 +116,7 @@ jid-cols() {
   addCol name .metadata.name
   psend kubectl get ${resType} "$@" -o custom-columns="$(printCols)"
 
-  echo "=== declare custom columns (type: 'q' to end)"
+  echo "=== declare custom columns (type: 'q' to end)" 1>&2
   local col
   while ! [[ $col == 'q' ]]; do
     read -p "next column name: " col
@@ -128,9 +128,13 @@ jid-cols() {
   done
 
   cmd=$"kubectl get ${resType} $@ -o custom-columns=\"$(printCols)\""
-  echo "---> $cmd"
-  eval "$cmd"
-  echo "---> kcc-${resType}() { $cmd ; }"
+  cat <<EOF
+  kcc-${resType}() { $cmd; }
+  && type kcc-${resType} 1>&2
+  && kcc-${resType}
+EOF
+}
+
 usage() {
   declare desc="Prints usage hints"
   declare cmd=${1:-jidder}
