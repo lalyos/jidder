@@ -16,10 +16,18 @@ It is a single binary ready to use on Linux/OSX, or it can be used as a kubectl-
 ## Installation - standalone
 
 ```
-curl ... | bash
+curl -Lo /usr/local/bin/jidder https://github.com/lalyos/jidder/releases/download/tip/jidder-$(uname)
+chmod +x /usr/local/bin/jidder
 ```
 
-## Installation - krew
+## Installation - standalone kubectl plugin
+
+```
+curl -Lo /usr/local/bin/kubectl-jid https://github.com/lalyos/jidder/releases/download/tip/jidder-$(uname)
+chmod +x /usr/local/bin/kubectl-jid
+```
+
+## Installation - krew kubectl plugin
 
 First make sure krew is [installed](https://krew.sigs.k8s.io/docs/user-guide/setup/install/)
 ```
