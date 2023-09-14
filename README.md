@@ -11,7 +11,7 @@ In both case the jsonpath is interactively contstructed, with the help of [jid](
 
 If you don't use [krew](https://krew.sigs.k8s.io), or just to want quickly try the latest dev version:
 ```
-curl -Lo /usr/local/bin/kubectl-jid https://github.com/lalyos/jidder/releases/download/tip/jidder-$(uname)
+curl -Lo /usr/local/bin/kubectl-jid https://github.com/lalyos/jidder/releases/download/tip/jidder-$(uname)-$(uname -m)
 chmod +x /usr/local/bin/kubectl-jid
 cp /usr/local/bin/kubectl-jid /usr/local/bin/kubectl-jid_cols
 ```
