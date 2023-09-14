@@ -11,12 +11,14 @@ install-dev:
 	ln -s $(PWD)/jidder ~/.krew/bin/kubectl-jid_cols
 
 deps:
-	@go-bindata --version || go get github.com/jteeuwen/go-bindata/...
+	@go-bindata --version || go install github.com/jteeuwen/go-bindata/go-bindata@latest
 
 cross: deps
 	go-bindata cmd
-	GOOS=linux go build -o build/jidder-Linux
-	GOOS=darwin go build -o build/jidder-Darwin
+	GOOS=linux GOARCH=amd64 go build -o build/jidder-Linux-amd64
+	GOOS=linux GOARCH=arm64 go build -o build/jidder-Linux-arm64
+	GOOS=darwin GOARCH=amd64 go build -o build/jidder-Darwin-amd64
+	GOOS=darwin GOARCH=arm64 go build -o build/jidder-Darwin-arm64
 
 ci: cross
 	zip build/jidder.zip build/jidder-Darwin build/jidder-Linux
