@@ -21,8 +21,8 @@ cross: deps
 	GOOS=darwin GOARCH=arm64 go build -o build/jidder-Darwin-arm64
 
 ci: cross
-	zip build/jidder.zip build/jidder-Darwin build/jidder-Linux
-	tar -czvf build/jidder.tgz -C build jidder-Darwin jidder-Linux
+	zip build/jidder.zip build/jidder-Darwin-amd64 build/jidder-Darwin-arm64 build/jidder-Linu-amd64 build/jidder-Linux-arm64
+	tar -czvf build/jidder.tgz -C build jidder-Darwin-amd64 jidder-Darwin-arm64 jidder-Linux-amd64 jidder-Linux-arm64
 
 clean:
 	rm -rf build
